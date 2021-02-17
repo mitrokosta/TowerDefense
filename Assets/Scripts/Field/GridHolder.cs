@@ -50,7 +50,11 @@ namespace Field
                     return;
                 }
                 
-                Debug.Log("hit!");
+                Vector3 hitPosition = hit.point;
+                Vector3 difference = hitPosition - m_Offset;
+                int x = (int) (difference.x / m_NodeSize);
+                int y = (int) (difference.y / m_NodeSize);
+                Debug.Log(x + " " + y);
             }
         }
 
