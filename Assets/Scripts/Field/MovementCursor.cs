@@ -33,17 +33,14 @@ namespace Field
         {
             m_Camera = Camera.main;
             m_Collider = GetComponent<Collider>();
+            SetBeginParam();
         }
 
         private void OnValidate()
         {
-            // default plane size is 10x10
-            var width = m_GridWidth * m_NodeSize;
-            var height = m_GridHeight * m_NodeSize;
-            transform.localScale = new Vector3(width * 0.1f, 1f, height * 0.1f);
-            m_Offset = transform.position - (new Vector3(width, 0f, height)) * 0.5f;
+            SetBeginParam();
         }
-
+        
         private void Update()
         {
             if (m_Camera == null)
@@ -77,6 +74,16 @@ namespace Field
             {
                 m_Cursor.SetActive(false);
             }
+        }
+        
+        // установка начальных скейла и оффсета, юзается в awake и validate
+        private void SetBeginParam()
+        {
+            // default plane size is 10x10
+            var width = m_GridWidth * m_NodeSize;
+            var height = m_GridHeight * m_NodeSize;
+            transform.localScale = new Vector3(width * 0.1f, 1f, height * 0.1f);
+            m_Offset = transform.position - (new Vector3(width, 0f, height)) * 0.5f;
         }
 
         private bool IsPositionInCollider(Vector3 position)
