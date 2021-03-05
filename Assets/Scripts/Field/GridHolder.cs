@@ -112,7 +112,7 @@ namespace Field
                 if (node.IsOccupied)
                 {
                     Gizmos.color = Color.black;
-                    Gizmos.DrawSphere(node.Position, 0.5f);
+                    Gizmos.DrawCube(node.Position, new Vector3(m_NodeSize, m_NodeSize, m_NodeSize));
                     continue;
                 }
                 Gizmos.color = Color.red;

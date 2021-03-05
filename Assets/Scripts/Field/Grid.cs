@@ -35,6 +35,26 @@ namespace Field
             m_Pathfinding.UpdateField();
         }
 
+        public bool HasNode(Vector2Int coordinate)
+        {
+            return HasNode(coordinate.x, coordinate.y);
+        }
+        
+        public bool HasNode(int i, int j)
+        {
+            if (i < 0 || i >= m_Width)
+            {
+                return false;
+            }
+            
+            if (j < 0 || j >= m_Height)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         public Node GetNode(Vector2Int coordinate)
         {
             return GetNode(coordinate.x, coordinate.y);
@@ -42,12 +62,7 @@ namespace Field
 
         public Node GetNode(int i, int j)
         {
-            if (i < 0 || i >= m_Width)
-            {
-                return null;
-            }
-
-            if (j < 0 || j >= m_Height)
+            if (!HasNode(i, j))
             {
                 return null;
             }

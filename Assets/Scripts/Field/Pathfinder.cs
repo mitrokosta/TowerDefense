@@ -1,3 +1,5 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -30,52 +32,84 @@ namespace Field
             {
                 Vector2Int current = queue.Dequeue();
                 Node currentNode = m_Grid.GetNode(current);
-                float weightToTarget = currentNode.PathWeight + 1f;
 
-                foreach (Vector2Int neighbour in GetNeighbours(current))
+                foreach (Connection neighbour in GetNeighbours(current))
                 {
-                    Node neighbourNode = m_Grid.GetNode(neighbour);
+                    float weightToTarget = currentNode.PathWeight + neighbour.Weight;
+                    Node neighbourNode = m_Grid.GetNode(neighbour.Coordinate);
                     if (weightToTarget < neighbourNode.PathWeight)
                     {
                         neighbourNode.NextNode = currentNode;
                         neighbourNode.PathWeight = weightToTarget;
-                        queue.Enqueue(neighbour);
+                        queue.Enqueue(neighbour.Coordinate);
                     }
                 }
             }
         }
 
-        private IEnumerable<Vector2Int> GetNeighbours(Vector2Int coordinate)
+        private IEnumerable<Connection> GetNeighbours(Vector2Int coordinate)
         {
-            Vector2Int rightCoordinate = coordinate + Vector2Int.right;
-            Vector2Int leftCoordinate = coordinate + Vector2Int.left;
-            Vector2Int upCoordinate = coordinate + Vector2Int.up;
-            Vector2Int downCoordinate = coordinate + Vector2Int.down;
-            
-            bool hasRightNode = rightCoordinate.x < m_Grid.Width && !m_Grid.GetNode(rightCoordinate).IsOccupied;
-            bool hasLeftNode = leftCoordinate.x >= 0 && !m_Grid.GetNode(leftCoordinate).IsOccupied;
-            bool hasUpNode = upCoordinate.y < m_Grid.Height && !m_Grid.GetNode(upCoordinate).IsOccupied;
-            bool hasDownNode = downCoordinate.y >= 0 && !m_Grid.GetNode(downCoordinate).IsOccupied;
-            
-            if (hasRightNode)
+            float sideStep = 1.0f;
+            float diagonalStep = (float)Math.Sqrt(2.0f);
+            var possibleNeighbours = new List<Connection>()
             {
-                yield return rightCoordinate;
+                new Connection(coordinate + Vector2Int.right, sideStep),
+                new Connection(coordinate + Vector2Int.left, sideStep),
+                new Connection(coordinate + Vector2Int.up, sideStep),
+                new Connection(coordinate + Vector2Int.down, sideStep),
+                
+                new Connection(coordinate + Vector2Int.right + Vector2Int.up, diagonalStep),
+                new Connection(coordinate + Vector2Int.right + Vector2Int.down, diagonalStep),
+                
+                new Connection(coordinate + Vector2Int.left + Vector2Int.up, diagonalStep),
+                new Connection(coordinate + Vector2Int.left + Vector2Int.down, diagonalStep),
+            };
+            
+
+            foreach (var neighbour in possibleNeighbours)
+            {
+                if (CanPass(coordinate, neighbour.Coordinate))
+                {
+                    yield return neighbour;
+                }
+            }
+        }
+
+        // проверка на возможность прохода из from в to
+        private bool CanPass(Vector2Int from, Vector2Int to)
+        {
+            if (!m_Grid.HasNode(from))
+            {
+                return false;
+            }
+
+            if (!m_Grid.HasNode(to) || m_Grid.GetNode(to).IsOccupied)
+            {
+                return false;
             }
             
-            if (hasLeftNode)
+            Vector2Int diff = to - from;
+            Vector2Int neighbour;
+
+            if (diff.x != 0)
             {
-                yield return leftCoordinate;
+                neighbour = from + new Vector2Int(diff.x, 0);
+                if (m_Grid.HasNode(neighbour) && m_Grid.GetNode(neighbour).IsOccupied)
+                {
+                    return false;
+                }
             }
             
-            if (hasUpNode)
+            if (diff.y != 0)
             {
-                yield return upCoordinate;
+                neighbour = from + new Vector2Int(0, diff.y);
+                if (m_Grid.HasNode(neighbour) && m_Grid.GetNode(neighbour).IsOccupied)
+                {
+                    return false;
+                }
             }
-            
-            if (hasDownNode)
-            {
-                yield return downCoordinate;
-            }
+
+            return true;
         }
     }
 }
