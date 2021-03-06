@@ -43,7 +43,7 @@ namespace Field
 
             m_Offset = transform.position -
                        (new Vector3(width, 0f, height) * 0.5f);
-            m_Grid = new Grid(m_GridWidth, m_GridHeight, m_Offset, m_NodeSize, m_TargetCoordinate);
+            m_Grid = new Grid(m_GridWidth, m_GridHeight, m_Offset, m_NodeSize, m_StartCoordinate, m_TargetCoordinate);
         }
 
         private void OnValidate()
@@ -88,8 +88,10 @@ namespace Field
                 if (Input.GetMouseButtonDown(0))
                 {
                     Node node = m_Grid.GetNode(x, y);
-                    node.IsOccupied = !node.IsOccupied;
-                    m_Grid.UpdatePathfinding();
+                    if (m_Grid.ChangeNodeOccupationStatus(new Vector2Int(x, y), !node.IsOccupied))
+                    {
+                        m_Grid.UpdatePathfinding();
+                    }
                 }
             }
         }

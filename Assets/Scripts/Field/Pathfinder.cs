@@ -2,17 +2,20 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace Field
 {
     public class Pathfinder
     {
         private Grid m_Grid;
+        private Vector2Int m_Start;
         private Vector2Int m_Target;
 
-        public Pathfinder(Grid grid, Vector2Int target)
+        public Pathfinder(Grid grid, Vector2Int start, Vector2Int target)
         {
             m_Grid = grid;
+            m_Start = start;
             m_Target = target;
         }
 
@@ -21,12 +24,17 @@ namespace Field
             foreach (Node node in m_Grid.EnumerateAllNodes())
             {
                 node.ResetWeight();
+                node.m_OccupationAvailability = OccupationAvailability.CanOccupy;
             }
             
             Queue<Vector2Int> queue = new Queue<Vector2Int>();
 
             queue.Enqueue(m_Target);
-            m_Grid.GetNode(m_Target).PathWeight = 0f;
+            
+            Node start = m_Grid.GetNode(m_Start);
+            Node target = m_Grid.GetNode(m_Target);
+            
+            target.PathWeight = 0f;
 
             while (queue.Count > 0)
             {
@@ -44,6 +52,15 @@ namespace Field
                         queue.Enqueue(neighbour.Coordinate);
                     }
                 }
+            }
+            
+            start.m_OccupationAvailability = OccupationAvailability.CanNotOccupy;
+            target.m_OccupationAvailability = OccupationAvailability.CanNotOccupy;
+
+            while (start != target && start != null) // rider ругается, но почему?
+            {
+                start = start.NextNode;
+                start.m_OccupationAvailability = OccupationAvailability.Undefined;
             }
         }
 
@@ -110,6 +127,53 @@ namespace Field
             }
 
             return true;
+        }
+
+        public bool CanOccupy(Vector2Int coordinate)
+        {
+            Node node = m_Grid.GetNode(coordinate);
+
+            // проверка кэша
+            if (node.m_OccupationAvailability != OccupationAvailability.Undefined)
+            {
+                return node.m_OccupationAvailability == OccupationAvailability.CanOccupy;
+            }
+            
+            // --> обход в ширину
+            Queue<Vector2Int> queue = new Queue<Vector2Int>();
+            bool[] visited = new bool[m_Grid.Width * m_Grid.Height];
+            for (int i = 0; i < visited.Length; i++)
+            {
+                visited[i] = false;
+            }
+
+            queue.Enqueue(m_Target);
+            visited[m_Target.x * m_Grid.Width + m_Target.y] = true;
+
+            while (queue.Count > 0)
+            {
+                Vector2Int current = queue.Dequeue();
+
+                foreach (Connection neighbour in GetNeighbours(current))
+                {
+                    Vector2Int nearCoordinate = neighbour.Coordinate;
+                    if (nearCoordinate != coordinate && !visited[nearCoordinate.x * m_Grid.Width + nearCoordinate.y])
+                    {
+                        queue.Enqueue(nearCoordinate);
+                        visited[nearCoordinate.x * m_Grid.Width + nearCoordinate.y] = true;
+                    }
+                }
+            }
+            // <--
+
+            if (visited[m_Start.x * m_Grid.Width + m_Start.y])
+            {
+                node.m_OccupationAvailability = OccupationAvailability.CanOccupy;
+                return true;
+            }
+
+            node.m_OccupationAvailability = OccupationAvailability.CanNotOccupy;
+            return false;
         }
     }
 }

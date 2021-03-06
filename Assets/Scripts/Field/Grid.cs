@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace Field
 {
@@ -15,7 +16,7 @@ namespace Field
         public int Width => m_Width;
         public int Height => m_Height;
 
-        public Grid(int width, int height, Vector3 offset, float nodeSize, Vector2Int target)
+        public Grid(int width, int height, Vector3 offset, float nodeSize, Vector2Int start, Vector2Int target)
         {
             m_Width = width;
             m_Height = height;
@@ -30,7 +31,7 @@ namespace Field
                 }
             }
             
-            m_Pathfinding = new Pathfinder(this, target);
+            m_Pathfinding = new Pathfinder(this, start, target);
             
             m_Pathfinding.UpdateField();
         }
@@ -62,11 +63,7 @@ namespace Field
 
         public Node GetNode(int i, int j)
         {
-            if (!HasNode(i, j))
-            {
-                return null;
-            }
-            
+            Assert.IsTrue(HasNode(i, j));
             return m_Nodes[i, j];
         }
 
@@ -84,6 +81,28 @@ namespace Field
         public void UpdatePathfinding()
         {
             m_Pathfinding.UpdateField();
+        }
+
+        // вернет true, если что-то поменялось
+        public bool ChangeNodeOccupationStatus(Vector2Int coordinate, bool isOccupy)
+        {
+            Node node = GetNode(coordinate);
+            
+            if (isOccupy)
+            {
+                if (m_Pathfinding.CanOccupy(coordinate))
+                {
+                    node.IsOccupied = true;
+                    return true;
+                }
+            }
+            else
+            {
+                node.IsOccupied = false;
+                return true;
+            }
+
+            return false;
         }
     }
 }
