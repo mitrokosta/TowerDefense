@@ -11,6 +11,7 @@ namespace Field
         private Grid m_Grid;
         private Vector2Int m_Start;
         private Vector2Int m_Target;
+        private const float SQRT_2 = 1.41f;
 
         public Pathfinder(Grid grid, Vector2Int start, Vector2Int target)
         {
@@ -67,7 +68,7 @@ namespace Field
         private IEnumerable<Connection> GetNeighbours(Vector2Int coordinate)
         {
             float sideStep = 1.0f;
-            float diagonalStep = (float)Math.Sqrt(2.0f);
+            float diagonalStep = SQRT_2;
             var possibleNeighbours = new List<Connection>()
             {
                 new Connection(coordinate + Vector2Int.right, sideStep),
