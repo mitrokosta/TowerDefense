@@ -5,12 +5,13 @@ namespace Enemy
     public class EnemyData
     {
         private EnemyView m_View;
+        public readonly EnemyAsset Asset;
 
         public EnemyView View => m_View;
 
         public EnemyData(EnemyAsset asset)
         {
-            
+            this.Asset = asset;
         }
 
         public void AttachView(EnemyView view)
