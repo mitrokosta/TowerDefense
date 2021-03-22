@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 65e27e7fc7ea45879190e7f5ba3810d0, type: 3}
   m_Name: Level 1 Asset
   m_EditorClassIdentifier: 
-  SceneAsset: {fileID: 102900000, guid: 9fc0d4010bbf28b4594072e72b8655ab, type: 3}
+  SceneAsset: {fileID: 102900000, guid: ccb21b47777f1184dbc39d5a5e50fdd5, type: 3}
   SpawnWavesAsset: {fileID: 11400000, guid: fd7ee6ce608b1e44580f9c77843a17f2, type: 2}
