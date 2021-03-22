@@ -28,7 +28,7 @@ namespace Field
 
         public Grid Grid => m_Grid;
 
-        private void Start()
+        public void CreateGrid()
         {
             m_Camera = Camera.main;
 
@@ -61,7 +61,7 @@ namespace Field
                        (new Vector3(width, 0f, height) * 0.5f);
         }
 
-        private void Update()
+        public void RaycastInGrid()
         {
             if (m_Grid == null || m_Camera == null)
             {
@@ -76,6 +76,7 @@ namespace Field
             {
                 if (hit.transform != transform)
                 {
+                    m_Grid.UnselectNode();
                     return;
                 }
 
@@ -85,14 +86,15 @@ namespace Field
                 int x = (int) (difference.x / m_NodeSize);
                 int y = (int) (difference.z / m_NodeSize);
 
-                if (Input.GetMouseButtonDown(0))
+                m_Grid.SelectCoordinate(new Vector2Int(x, y));
+                /*if (Input.GetMouseButtonDown(0))
                 {
                     Node node = m_Grid.GetNode(x, y);
                     if (m_Grid.ChangeNodeOccupationStatus(new Vector2Int(x, y), !node.IsOccupied))
                     {
                         m_Grid.UpdatePathfinding();
                     }
-                }
+                }*/
             }
         }
 

@@ -1,40 +1,48 @@
 using Field;
 using UnityEngine;
+using Grid = Field.Grid;
 
-namespace Unit
+namespace Enemy
 {
-    public class GridMovementAgent : MonoBehaviour
+    public class GridMovementAgent : IMovementAgent
     {
-        [SerializeField]
         private float m_Speed;
+        private Transform m_Transform;
+
+        public GridMovementAgent(float speed, Transform transform, Grid grid)
+        {
+            m_Speed = speed;
+            m_Transform = transform;
+            
+            SetTargetNode(grid.GetStartNode());
+        }
 
         private const float TOLERANCE = 0.1f;
 
         private Node m_TargetNode;
 
-        private void Update()
+        public void TickMovement()
         {
             if (m_TargetNode == null)
             {
-                Destroy(gameObject); // заглушка
                 return;
             }
 
             Vector3 target = m_TargetNode.Position;
             
-            float distance = (target - transform.position).magnitude;
+            float distance = (target - m_Transform.position).magnitude;
             if (distance < TOLERANCE)
             {
                 m_TargetNode = m_TargetNode.NextNode;
                 return;
             }
         
-            Vector3 dir = (target - transform.position).normalized;
+            Vector3 dir = (target - m_Transform.position).normalized;
             Vector3 delta = dir * (m_Speed * Time.deltaTime);
-            transform.Translate(delta);
+            m_Transform.Translate(delta);
         }
 
-        public void SetStartNode(Node node)
+        private void SetTargetNode(Node node)
         {
             m_TargetNode = node;
         }
