@@ -12,6 +12,7 @@ namespace Field
         private int m_Height;
 
         private Pathfinder m_Pathfinding;
+        private GridHolder m_GridHolder;
         
         private Vector2Int m_StartCoordinate;
         private Vector2Int m_TargetCoordinate;
@@ -20,10 +21,11 @@ namespace Field
         public int Width => m_Width;
         public int Height => m_Height;
 
-        public Grid(int width, int height, Vector3 offset, float nodeSize, Vector2Int start, Vector2Int target)
+        public Grid(int width, int height, GridHolder gridHolder, Vector2Int start, Vector2Int target)
         {
             m_Width = width;
             m_Height = height;
+            m_GridHolder = gridHolder;
             m_StartCoordinate = start;
             m_TargetCoordinate = target;
             
@@ -33,7 +35,7 @@ namespace Field
             {
                 for (int j = 0; j < m_Nodes.GetLength(1); j++)
                 {
-                    m_Nodes[i, j] = new Node(offset + new Vector3(i + .5f, 0, j + .5f) * nodeSize);
+                    m_Nodes[i, j] = new Node(gridHolder.GetGridPosition(new Vector2Int(i, j)));
                 }
             }
             
@@ -72,7 +74,7 @@ namespace Field
             Assert.IsTrue(HasNode(i, j));
             return m_Nodes[i, j];
         }
-
+        
         public IEnumerable<Node> EnumerateAllNodes()
         {
             for (int i = 0; i < m_Width; i++)
@@ -119,10 +121,15 @@ namespace Field
             return GetNode(m_TargetCoordinate);
         }
 
-        // вернет true, если что-то поменялось
-        public bool ChangeNodeOccupationStatus(Vector2Int coordinate, bool isOccupy)
+        public bool CanOccupy(Node node)
         {
-            Node node = GetNode(coordinate);
+            return m_Pathfinding.CanOccupy(m_GridHolder.GetGridCoordinate(node.Position));
+        }
+
+        // вернет true, если что-то поменялось
+        public bool ChangeNodeOccupationStatus(Node node, bool isOccupy)
+        {
+            Vector2Int coordinate = m_GridHolder.GetGridCoordinate(node.Position);
             
             if (isOccupy)
             {

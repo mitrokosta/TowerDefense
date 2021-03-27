@@ -1,8 +1,6 @@
-﻿using Enemy;
-using Runtime;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace Assets
+namespace Enemy
 {
     [CreateAssetMenu(menuName = "Assets/Enemy Asset", fileName = "Enemy Asset")]
     public class EnemyAsset : ScriptableObject

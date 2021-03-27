@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Field
 {
@@ -43,7 +42,18 @@ namespace Field
 
             m_Offset = transform.position -
                        (new Vector3(width, 0f, height) * 0.5f);
-            m_Grid = new Grid(m_GridWidth, m_GridHeight, m_Offset, m_NodeSize, m_StartCoordinate, m_TargetCoordinate);
+            m_Grid = new Grid(m_GridWidth, m_GridHeight, this, m_StartCoordinate, m_TargetCoordinate);
+        }
+
+        public Vector2Int GetGridCoordinate(Vector3 position)
+        {
+            Vector3 difference = position - m_Offset;
+            return new Vector2Int((int) (difference.x / m_NodeSize), (int) (difference.z / m_NodeSize));
+        }
+
+        public Vector3 GetGridPosition(Vector2Int coordinate)
+        {
+            return m_Offset + new Vector3(coordinate.x + .5f, 0, coordinate.y + .5f) * m_NodeSize;
         }
 
         private void OnValidate()
@@ -80,13 +90,7 @@ namespace Field
                     return;
                 }
 
-                Vector3 hitPosition = hit.point;
-                Vector3 difference = hitPosition - m_Offset;
-
-                int x = (int) (difference.x / m_NodeSize);
-                int y = (int) (difference.z / m_NodeSize);
-
-                m_Grid.SelectCoordinate(new Vector2Int(x, y));
+                m_Grid.SelectCoordinate(GetGridCoordinate(hit.point));
                 /*if (Input.GetMouseButtonDown(0))
                 {
                     Node node = m_Grid.GetNode(x, y);
