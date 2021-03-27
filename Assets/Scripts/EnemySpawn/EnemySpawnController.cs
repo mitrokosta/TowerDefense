@@ -11,18 +11,25 @@ namespace EnemySpawn
         private SpawnWavesAsset m_SpawnWaves;
         private Grid m_Grid;
 
-        private float m_SpawnStartTime;
-        private float m_PassedTimeAtPreviousFrame = -1f;
-
+        private int[] m_SpawnCounters;
+        private float[] m_SpawnTimers;
+        
         public EnemySpawnController(SpawnWavesAsset spawnWaves, Grid grid)
         {
             m_SpawnWaves = spawnWaves;
             m_Grid = grid;
+            
+            m_SpawnCounters = new int[spawnWaves.SpawnWaves.Length];
+            m_SpawnTimers = new float[spawnWaves.SpawnWaves.Length];
         }
 
         public void OnStart()
         {
-            m_SpawnStartTime = Time.time;
+            for (int i = 0; i < m_SpawnWaves.SpawnWaves.Length; ++i)
+            {
+                var wave = m_SpawnWaves.SpawnWaves[i];
+                m_SpawnTimers[i] = Time.time + wave.TimeBeforeStartWave - wave.TimeBetweenSpawns; // минус чтобы спавнились сразу
+            }
         }
 
         public void OnStop()
@@ -31,28 +38,21 @@ namespace EnemySpawn
 
         public void Tick()
         {
-            float passedTime = Time.time - m_SpawnStartTime;
-            float timeToSpawn = 0f;
-            
-            foreach (SpawnWave wave in m_SpawnWaves.SpawnWaves)
+            for (int i = 0; i < m_SpawnWaves.SpawnWaves.Length; ++i)
             {
-                timeToSpawn += wave.TimeBeforeStartWave;
-
-                for (int i = 0; i < wave.Count; i++)
+                var wave = m_SpawnWaves.SpawnWaves[i];
+                if (m_SpawnCounters[i] >= wave.Count)
                 {
-                    if (passedTime >= timeToSpawn && m_PassedTimeAtPreviousFrame < timeToSpawn)
-                    {
-                        SpawnEnemy(wave.EnemyAsset);
-                    }
+                    continue; // всех выпустили
+                }
 
-                    if (i < wave.Count - 1)
-                    {
-                        timeToSpawn += wave.TimeBetweenSpawns;
-                    }
+                if (m_SpawnTimers[i] + wave.TimeBetweenSpawns < Time.time)
+                {
+                    SpawnEnemy(wave.EnemyAsset);
+                    m_SpawnTimers[i] = Time.time;
+                    ++m_SpawnCounters[i];
                 }
             }
-            
-            m_PassedTimeAtPreviousFrame = passedTime;
         }
 
         private void SpawnEnemy(EnemyAsset asset)
