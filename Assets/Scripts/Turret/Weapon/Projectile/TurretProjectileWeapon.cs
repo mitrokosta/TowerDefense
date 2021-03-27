@@ -1,4 +1,6 @@
-﻿using Enemy;
+﻿using System.Collections.Generic;
+using Enemy;
+using Field;
 using Runtime;
 using UnityEngine;
 
@@ -10,6 +12,7 @@ namespace Turret.Weapon.Projectile
         private TurretView m_View;
         private float m_TimeBetweenShots;
         private float m_MaxDistance;
+        private List<Node> availableNodes;
 
         private float m_LastShotTime;
 
@@ -19,6 +22,7 @@ namespace Turret.Weapon.Projectile
             m_View = view;
             m_TimeBetweenShots = 1f / m_Asset.RateOfFire;
             m_MaxDistance = asset.MaxDistance;
+            availableNodes = Game.Player.Grid.GetNodesInCircle(m_View.ProjectileOrigin.position, m_MaxDistance);
         }
 
         public void TickShoot()
@@ -29,8 +33,7 @@ namespace Turret.Weapon.Projectile
                 return;
             }
 
-            EnemyData closestEnemyData =
-                Game.Player.EnemySearch.GetClosestEnemy(m_View.transform.position, m_MaxDistance);
+            EnemyData closestEnemyData = EnemySearch.GetClosestEnemy(m_View.transform.position, m_MaxDistance, availableNodes);
 
             if (closestEnemyData == null)
             {

@@ -8,12 +8,17 @@ namespace Enemy
     {
         private float m_Speed;
         private Transform m_Transform;
+        private EnemyData m_Data;
+        private Node m_CurrentNode;
+        private Grid m_Grid;
 
-        public FlyingMovementAgent(float speed, Transform transform, Grid grid)
+        public FlyingMovementAgent(float speed, Transform transform, Grid grid, EnemyData data)
         {
             m_Speed = speed;
             m_Transform = transform;
-            
+            m_Data = data;
+            m_Grid = grid;
+            m_CurrentNode = grid.GetNodeAtPoint(transform.position);
             SetTargetNode(grid.GetTargetNode());
         }
 
@@ -43,6 +48,14 @@ namespace Enemy
             Vector3 dir = (target - m_Transform.position).normalized;
             Vector3 delta = dir * (m_Speed * Time.deltaTime);
             m_Transform.Translate(delta);
+            
+            Node nextNode = m_Grid.GetNodeAtPoint(m_Transform.position);
+            
+            if (nextNode != m_CurrentNode)
+            {
+                nextNode?.EnemyDatas.Add(m_Data);
+                m_CurrentNode?.EnemyDatas.Remove(m_Data);
+            }
         }
 
         private void SetTargetNode(Node node)

@@ -126,6 +126,29 @@ namespace Field
             return m_Pathfinding.CanOccupy(m_GridHolder.GetGridCoordinate(node.Position));
         }
 
+        public Node GetNodeAtPoint(Vector3 point)
+        {
+            return GetNode(m_GridHolder.GetGridCoordinate(point));
+        }
+
+        // метод вызывается не часто, поэтому можно просто по всем ходить
+        public List<Node> GetNodesInCircle(Vector3 point, float radius)
+        {
+            List<Node> nodes = new List<Node>();
+            
+            float sqrRadius = radius * radius;
+            
+            foreach (Node node in EnumerateAllNodes())
+            {
+                if ((point - node.Position).sqrMagnitude <= radius)
+                {
+                    nodes.Add(node);
+                }
+            }
+
+            return nodes;
+        }
+
         // вернет true, если что-то поменялось
         public bool ChangeNodeOccupationStatus(Node node, bool isOccupy)
         {
