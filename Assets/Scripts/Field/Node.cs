@@ -20,6 +20,7 @@ namespace Field
         public Node(Vector3 position)
         {
             Position = position;
+            EnemyDatas = new List<EnemyData>();
         }
 
         public void ResetWeight()

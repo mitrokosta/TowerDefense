@@ -55,6 +55,10 @@ namespace Enemy
             {
                 nextNode?.EnemyDatas.Add(m_Data);
                 m_CurrentNode?.EnemyDatas.Remove(m_Data);
+                
+                Debug.Log(m_CurrentNode?.Position + " -> " + nextNode?.Position);
+
+                m_CurrentNode = nextNode;
             }
         }
 
