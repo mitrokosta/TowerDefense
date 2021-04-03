@@ -53,6 +53,8 @@ namespace TurretSpawn
             {
                 m_Grid.UpdatePathfinding();
             }
+            
+            Game.Player.TurretSpawned(data);
         }
     }
 }

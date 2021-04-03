@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Enemy;
 using Field;
+using JetBrains.Annotations;
 using Runtime;
 using UnityEngine;
 
@@ -13,6 +14,11 @@ namespace Turret.Weapon.Projectile
         private float m_TimeBetweenShots;
         private float m_MaxDistance;
         private List<Node> availableNodes;
+        
+        [CanBeNull]
+        private EnemyData m_ClosestEnemyData;
+
+        private List<IProjectile> m_Projectiles = new List<IProjectile>();
 
         private float m_LastShotTime;
 
@@ -27,26 +33,59 @@ namespace Turret.Weapon.Projectile
 
         public void TickShoot()
         {
+            TickWeapon();
+            TickTower();
+            TickProjectiles();
+        }
+
+        private void TickWeapon()
+        {
             float elapsedTime = Time.time - m_LastShotTime;
             if (elapsedTime < m_TimeBetweenShots)
             {
                 return;
             }
 
-            EnemyData closestEnemyData = EnemySearch.GetClosestEnemy(m_View.transform.position, m_MaxDistance, availableNodes);
+            m_ClosestEnemyData = EnemySearch.GetClosestEnemy(m_View.transform.position, m_MaxDistance, availableNodes);
 
-            if (closestEnemyData == null)
+            if (m_ClosestEnemyData == null)
             {
                 return;
             }
             
-            Shoot(closestEnemyData);
+            TickTower();
+            
+            Shoot(m_ClosestEnemyData);
             m_LastShotTime = Time.time;
+        }
+
+        private void TickProjectiles()
+        {
+            for (var i = 0; i < m_Projectiles.Count; i++)
+            {
+                IProjectile projectile = m_Projectiles[i];
+                projectile.TickApproaching();
+                if (projectile.DidHit())
+                {
+                    projectile.DestroyProjectile();
+                    m_Projectiles[i] = null;
+                }
+            }
+
+            m_Projectiles.RemoveAll(projectile => projectile == null);
+        }
+
+        private void TickTower()
+        {
+            if (m_ClosestEnemyData != null)
+            {
+                m_View.TowerLookAt(m_ClosestEnemyData.View.transform.position);
+            }
         }
 
         private void Shoot(EnemyData enemyData)
         {
-            m_Asset.ProjectileAsset.CreateProjectile(m_View.ProjectileOrigin.position, m_View.ProjectileOrigin.forward, enemyData);
+            m_Projectiles.Add(m_Asset.ProjectileAsset.CreateProjectile(m_View.ProjectileOrigin.position, m_View.ProjectileOrigin.forward, enemyData));
         }
     }
 }
