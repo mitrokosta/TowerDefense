@@ -37,11 +37,7 @@ namespace Turret.Weapon.Projectile.Bullet
 
         public void DestroyProjectile()
         {
-            if (m_HitEnemy != null)
-            {
-                m_HitEnemy.ApplyDamage(m_Damage);
-            }
-            
+            m_HitEnemy?.ApplyDamage(m_Damage);
             Destroy(gameObject);
         }
     }
