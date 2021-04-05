@@ -24,7 +24,7 @@ namespace Enemy
             m_View.AttachData(this);
         }
 
-        public void ApplyDamage(int damage)
+        public void ApplyDamage(float damage)
         {
             m_Health -= damage;
             if (m_Health < 0)
