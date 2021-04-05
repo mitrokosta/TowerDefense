@@ -5,10 +5,16 @@ namespace Turret.Weapon.Projectile.Bullet
 {
     public class BulletProjectile : MonoBehaviour, IProjectile
     {
-        private float m_Speed = 10f;
-        private int m_Damage = 5;
+        private float m_Speed;
+        private float m_Damage;
         private bool m_DidHit = false;
         private EnemyData m_HitEnemy = null;
+
+        public void SetBulletProperties(float speed, float damage)
+        {
+            m_Speed = speed;
+            m_Damage = damage;
+        }
         
         public void TickApproaching()
         {

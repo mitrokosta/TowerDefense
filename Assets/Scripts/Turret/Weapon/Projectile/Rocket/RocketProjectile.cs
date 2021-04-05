@@ -8,15 +8,18 @@ namespace Turret.Weapon.Projectile.Rocket
 {
     public class RocketProjectile : MonoBehaviour, IProjectile
     {
-        private float m_Speed = 10f;
-        private float m_Radius = 20f;
-        private int m_Damage = 20;
+        private float m_Speed;
+        private float m_Radius;
+        private float m_Damage;
         private bool m_DidHit = false;
         private EnemyData m_Target = null;
 
-        public void SetTarget(EnemyData enemyData)
+        public void SetRocketProperties(EnemyData target, float speed, float aoe, float damage)
         {
-            m_Target = enemyData;
+            m_Target = target;
+            m_Speed = speed;
+            m_Radius = aoe;
+            m_Damage = damage;
         }
         
         private void OnTriggerEnter(Collider other)

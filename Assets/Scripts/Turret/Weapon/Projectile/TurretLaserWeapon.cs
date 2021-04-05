@@ -26,6 +26,7 @@ namespace Turret.Weapon.Projectile
             m_Asset = asset;
             m_View = view;
             m_MaxDistance = asset.MaxDistance;
+            m_Damage = asset.Damage;
             m_AvailableNodes = Game.Player.Grid.GetNodesInCircle(m_View.ProjectileOrigin.position, m_MaxDistance);
             m_LineRenderer = Object.Instantiate(asset.LineRendererPrefab, m_View.transform);
         }

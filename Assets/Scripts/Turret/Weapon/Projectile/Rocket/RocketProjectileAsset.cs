@@ -9,10 +9,19 @@ namespace Turret.Weapon.Projectile.Rocket
         [SerializeField]
         private RocketProjectile m_RocketPrefab;
         
+        [SerializeField]
+        private float m_Speed;
+        
+        [SerializeField]
+        private float m_Radius;
+        
+        [SerializeField]
+        private float m_Damage;
+        
         public override IProjectile CreateProjectile(Vector3 origin, Vector3 originForward, EnemyData enemyData)
         {
             RocketProjectile projectile = Instantiate(m_RocketPrefab, origin, Quaternion.LookRotation(originForward, Vector3.up));
-            projectile.SetTarget(enemyData);
+            projectile.SetRocketProperties(enemyData, m_Speed, m_Radius, m_Damage);
             return projectile;
         }
     }
