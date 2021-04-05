@@ -13,7 +13,7 @@ namespace Turret.Weapon.Projectile
         private LineRenderer m_LineRenderer;
         private TurretView m_View;
         private float m_MaxDistance;
-        private float m_Damage = 10.0f;
+        private float m_Damage;
         private List<Node> m_AvailableNodes;
         
         [CanBeNull]
