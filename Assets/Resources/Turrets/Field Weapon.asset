@@ -13,3 +13,4 @@ MonoBehaviour:
   m_Name: Field Weapon
   m_EditorClassIdentifier: 
   MaxDistance: 20
+  Damage: 10
