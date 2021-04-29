@@ -140,7 +140,7 @@ namespace Field
             
             foreach (Node node in EnumerateAllNodes())
             {
-                if ((point - node.Position).sqrMagnitude <= radius)
+                if ((point - node.Position).sqrMagnitude <= sqrRadius)
                 {
                     nodes.Add(node);
                 }
