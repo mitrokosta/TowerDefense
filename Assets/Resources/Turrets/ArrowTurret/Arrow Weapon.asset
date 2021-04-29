@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   RateOfFire: 2.5
   MaxDistance: 10
-  ProjectileAsset: {fileID: 11400000, guid: 21d7d5d88b18539449d74030c310d4d2, type: 2}
+  ProjectileAsset: {fileID: 11400000, guid: cb99166fd538ebe48a96b60521ba9878, type: 2}
