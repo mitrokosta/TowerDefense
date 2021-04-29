@@ -44,6 +44,13 @@ namespace Turret.Weapon.Projectile.Rocket
             {
                 foreach (EnemyData enemyData in node.EnemyDatas)
                 {
+                    float sqrDistance = (enemyData.View.transform.position - transform.position).sqrMagnitude;
+                    
+                    if (sqrDistance > m_Radius * m_Radius)
+                    {
+                        continue;
+                    }
+                    
                     enemyData.ApplyDamage(m_Damage);
                 }
             }

@@ -32,6 +32,13 @@ namespace Turret.Weapon.Projectile
             {
                 foreach (EnemyData enemyData in node.EnemyDatas)
                 {
+                    float sqrDistance = (enemyData.View.transform.position - m_View.ProjectileOrigin.position).sqrMagnitude;
+                    
+                    if (sqrDistance > m_MaxDistance * m_MaxDistance)
+                    {
+                        continue;
+                    }
+                    
                     enemyData.ApplyDamage(m_Damage * Time.deltaTime);
                 }
             }
