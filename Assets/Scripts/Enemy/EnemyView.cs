@@ -10,6 +10,11 @@ namespace Enemy
 
         public EnemyData Data => m_Data;
         public IMovementAgent MovementAgent => m_MovementAgent;
+        
+        [SerializeField]
+        private Animator m_Animator;
+
+        private static readonly int DieTrigger = Animator.StringToHash("Die");
 
         public void AttachData(EnemyData data)
         {
@@ -26,6 +31,12 @@ namespace Enemy
             {
                 m_MovementAgent = new GridMovementAgent(5f, transform, grid, m_Data);
             }
+        }
+
+        public void Die()
+        {
+            m_MovementAgent.Die();
+            m_Animator.SetTrigger(DieTrigger);
         }
     }
 }

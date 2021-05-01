@@ -64,5 +64,10 @@ namespace Enemy
         {
             m_TargetNode = node;
         }
+
+        public void Die()
+        {
+            m_CurrentNode?.EnemyDatas.Remove(m_Data);
+        }
     }
 }
